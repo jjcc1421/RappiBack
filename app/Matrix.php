@@ -11,8 +11,7 @@ class Matrix
 
     /**
      * Matrix constructor.
-     * @param array $matrix
-     * @param int $N
+     * @param $N
      */
     public function __construct($N)
     {
@@ -32,9 +31,12 @@ class Matrix
      * @param $y2
      * @param $z2
      * @return int
+     * @throws Exception
      */
     public function runQuery($x1, $y1, $z1, $x2, $y2, $z2)
     {
+
+        //chack out of bounds
         if (1 > (int)$x1 || (int)$x1 > (int)$x2 || (int)$x2 > (int)$this->N)
             throw new Exception("Out of bounds");
         if (1 > (int)$y1 || (int)$y1 > (int)$y2 || (int)$y2 > (int)$this->N)
@@ -60,9 +62,11 @@ class Matrix
      * @param $z
      * @param $W
      * @return mixed
+     * @throws Exception
      */
     public function update($x, $y, $z, $W)
     {
+        // check of out bounds
         if ($x > $this->N || $x < 1)
             throw new Exception("out of bounds");
         if ($y > $this->N || $y < 1)
@@ -74,6 +78,12 @@ class Matrix
         return $this->matrix[$x - 1][$y - 1][$z - 1];
     }
 
+    /**
+     * Execute a query (UPDATE|QUERY)
+     * @param $query
+     * @return int|null
+     * @throws Exception
+     */
     public function runCommand($query)
     {
         $queryArray = explode(" ", $query);

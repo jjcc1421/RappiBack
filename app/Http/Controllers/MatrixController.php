@@ -15,7 +15,6 @@ class MatrixController extends Controller
 
     public function index()
     {
-        //return $this->runTest("http://localhost/rappi/public/input0.txt");
         return view('index', ['output' => null]);
 
     }
@@ -62,29 +61,5 @@ class MatrixController extends Controller
             $output = null;
         }
         return $output;
-    }
-
-    /**
-     * Executes a specific query into matrix
-     * @param Matrix $matrix - matrix to get query
-     * @param $query - query to run
-     * @return int|null - out of query
-     */
-    public function runCommand(Matrix $matrix, $query)
-    {
-        //$query=fgets($this->_fp);
-        $queryArray = explode(" ", $query);
-        switch ($queryArray[0]) {
-            case 'UPDATE':
-                $matrix->update($queryArray[1], $queryArray[2], $queryArray[3], $queryArray[4]);
-                break;
-            case 'QUERY':
-                return $matrix->runQuery($queryArray[1], $queryArray[2], $queryArray[3], $queryArray[4], $queryArray[5], $queryArray[6]);
-                break;
-            default;
-                throw new Exception("Unsupported query");
-                break;
-        }
-        return null;
     }
 }
