@@ -8,7 +8,7 @@ use App\Http\Requests;
 use App\Matrix;
 use Illuminate\Support\Facades\Input;
 use Flash;
-use Mockery\CountValidator\Exception;
+use Exception;
 
 class MatrixController extends Controller
 {
@@ -48,7 +48,8 @@ class MatrixController extends Controller
                 $matrix = new Matrix($N);
                 for ($j = 0; $j < $queriesCases; $j++) {
                     $query = fgets($_fp);
-                    $queryOutput = $this->runCommand($matrix, $query);
+                    //$queryOutput = $this->runCommand($matrix, $query);
+                    $queryOutput = $matrix->runCommand($query);
                     if (!is_null($queryOutput)) {
                         $output = $output . $queryOutput . "<br/>";
                     }
@@ -69,7 +70,7 @@ class MatrixController extends Controller
      * @param $query - query to run
      * @return int|null - out of query
      */
-    private function runCommand(Matrix $matrix, $query)
+    public function runCommand(Matrix $matrix, $query)
     {
         //$query=fgets($this->_fp);
         $queryArray = explode(" ", $query);
