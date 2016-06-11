@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Matrix;
+use Illuminate\Support\Facades\Input;
+use Flash;
+use Mockery\CountValidator\Exception;
 
 class MatrixController extends Controller
 {
@@ -13,7 +16,15 @@ class MatrixController extends Controller
     public function index()
     {
         //return $this->runTest("http://localhost/rappi/public/input0.txt");
-        return view('index');
+        return view('index', ['output' => null]);
+
+    }
+
+    public function runExecution()
+    {
+        $file = Input::file('fileToUpload');
+        $output = $this->runTest($file->getPathname());
+        return view('index', ['output' => $output]);
 
     }
 
@@ -25,24 +36,30 @@ class MatrixController extends Controller
      */
     private function runTest($filePath)
     {
-        $output = "";
-        $_fp = fopen($filePath, "r");
-        $cases = fgets($_fp);
-        for ($i = 0; $i < $cases; $i++) {
-            $config = fgets($_fp);
-            $configArray = explode(" ", $config);
-            $N = $configArray[0];
-            $queriesCases = $configArray[1];
-            $matrix = new Matrix($N);
-            for ($j = 0; $j < $queriesCases; $j++) {
-                $query = fgets($_fp);
-                $queryOutput = $this->runCommand($matrix, $query);
-                if (!is_null($queryOutput)) {
-                    $output = $output . $queryOutput . "<br/>";
+        try {
+            $output = "";
+            $_fp = fopen($filePath, "r");
+            $cases = fgets($_fp);
+            for ($i = 0; $i < $cases; $i++) {
+                $config = fgets($_fp);
+                $configArray = explode(" ", $config);
+                $N = $configArray[0];
+                $queriesCases = $configArray[1];
+                $matrix = new Matrix($N);
+                for ($j = 0; $j < $queriesCases; $j++) {
+                    $query = fgets($_fp);
+                    $queryOutput = $this->runCommand($matrix, $query);
+                    if (!is_null($queryOutput)) {
+                        $output = $output . $queryOutput . "<br/>";
+                    }
                 }
             }
+            fclose($_fp);
+            Flash::success('Successful executed!');
+        } catch (Exception $e) {
+            Flash::Error('Can not execute');
+            $output = null;
         }
-        fclose($_fp);
         return $output;
     }
 
@@ -62,6 +79,9 @@ class MatrixController extends Controller
                 break;
             case 'QUERY':
                 return $matrix->runQuery($queryArray[1], $queryArray[2], $queryArray[3], $queryArray[4], $queryArray[5], $queryArray[6]);
+                break;
+            default;
+                throw new Exception("Unsupported query");
                 break;
         }
         return null;

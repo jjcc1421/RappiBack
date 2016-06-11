@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', ['as' => 'index', 'uses' => 'MatrixController@index']);
+Route::post('/case', ['as' => 'post_case', 'uses' => 'MatrixController@runExecution']);
 
-Route::get('/test','MatrixController@index' );
 
